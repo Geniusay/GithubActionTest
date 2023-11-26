@@ -12,4 +12,4 @@ jobs:
 
       - name: Get commit info
         run: |
-          git show ${{ github.sha }}
+          git show ${{ github.commit }}
