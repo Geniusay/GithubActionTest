@@ -1,0 +1,16 @@
+name: Version control
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update version
+        run: |
+          version=(git describe --tags --abbrev=0)
+          echo "Latest version:version"
