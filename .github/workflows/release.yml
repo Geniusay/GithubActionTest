@@ -14,3 +14,4 @@ jobs:
         run: |
           version=(git describe --tags --abbrev=0)
           echo "Latest version:version"
+
