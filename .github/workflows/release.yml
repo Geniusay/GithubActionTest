@@ -1,4 +1,4 @@
-name: 获取模块名
+name: 根据模块名推送不同模块的镜像
 
 on: [push]
 
@@ -15,6 +15,18 @@ jobs:
           # Extract module name using regex from commit message
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
-  
           echo "Commit Message: $COMMIT_MESSAGE"
           echo "Module Name: $MODULE_NAME"
+
+      - name: Build and Push Docker Images
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
+        run: |
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
+          cd $MODULE_NAME
+          docker build -t $DOCKER_USERNAME/$MODULE_NAME .
+          docker login -u $DOCKER_USERNAME -p $PWD
+          docker push 969025903/$MODULE_NAME
+          
