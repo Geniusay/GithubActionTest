@@ -1,4 +1,4 @@
-name: Show commit details
+name: 获取模块名
 
 on: [push]
 
@@ -10,10 +10,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Display commit information
+      - name: Get Module Name
         run: |
-          echo "Commit SHA: ${{ github.sha }}"
-          echo "Commit message: ${{ github.event.head_commit.message }}"
-          echo "Author: ${{ github.event.head_commit.author.name }}"
-          echo "Author email: ${{ github.event.head_commit.author.email }}"
-          echo "Timestamp: ${{ github.event.head_commit.timestamp }}"
+          # Extract module name using regex from commit message
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
+  
+          echo "Commit Message: $COMMIT_MESSAGE"
+          echo "Module Name: $MODULE_NAME"
