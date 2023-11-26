@@ -29,7 +29,7 @@ jobs:
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
           echo "Module Name: $MODULE_NAME"
-          cd $MODULE_NAME
+          cd $MODULE_NAME/target
           ls
           docker build -t $DOCKER_USERNAME/$MODULE_NAME .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
