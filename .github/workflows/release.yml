@@ -30,6 +30,7 @@ jobs:
           MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
           echo "Module Name: $MODULE_NAME"
           cd $MODULE_NAME
+          mkdir docker
           cp ./Dockerfile ./docker
           cp ./target/*.jar ./docker
           cd docker
