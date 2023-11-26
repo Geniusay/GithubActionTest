@@ -30,6 +30,6 @@ jobs:
           echo "Module Name: $MODULE_NAME"
           cd $MODULE_NAME
           docker build -t $DOCKER_USERNAME/$MODULE_NAME .
-          docker login -u $DOCKER_USERNAME -p $PWD
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PWD
           docker push 969025903/$MODULE_NAME
           
