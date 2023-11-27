@@ -13,10 +13,10 @@ jobs:
       skip: ${{steps.extract.outputs.skip}}
 
     steps:
-      - name: Checkout Auto Label
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Check Commit Message
+      - name: Checkout Auto Label
         run: |
           if [[ "${{ github.event.head_commit.message }}" == *"<Auto>"* ]]; then
             echo "Commit message contains <Auto>. Proceeding with the workflow."
@@ -112,13 +112,6 @@ jobs:
           echo "HOST=$host" >> $GITHUB_ENV
           echo "PORT=$port" >> $GITHUB_ENV
 
-      - name: 登录服务器, 执行脚本
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{env.HOST}}
-          port: ${{env.PORT}}
-          username: root
-          password: ${{env.PWD}}
-          # 执行脚本
-          script: |
-            docker pull $DOCKER_USERNAME/$MODULE:$VERSION
+      - name: Pull the Image
+        if: ${{ env.PWD != '' && env.PORT != '' & env.HOST != ''}}
+        run: sshpass -p ${{env.PWD}} ssh -p ${{env.PORT}} -o StrictHostKeyChecking=no root@${{env.HOST}} "docker pull $DOCKER_USERNAME/$MODULE:$VERSION"
