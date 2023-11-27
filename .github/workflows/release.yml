@@ -82,6 +82,7 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
+          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
         run: |
           echo "Module Name: $MODULE"
           cd $MODULE
@@ -91,7 +92,7 @@ jobs:
           cd docker
           docker build -t $DOCKER_USERNAME/$MODULE:$VERSION .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $DOCKER_USERNAME/$MODULE:$VERSION
+          docker push $DOCKER_REPO/$MODULE:$VERSION
 
       - name: Choose the Server Host
         if: ${{ env.ENV != ''}}
@@ -125,5 +126,5 @@ jobs:
           port: ${{ env.PORT }}
           # ssh进入系统后执行什么样的操作。一般是关闭原有的服务在重启
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.MODULE }}:${{ env.VERSION }}
+            docker pull ${{ secrets.DOCKER_REPO }}/${{ env.MODULE }}:${{ env.VERSION }}
       
