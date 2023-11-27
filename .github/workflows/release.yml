@@ -78,15 +78,5 @@ jobs:
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push $DOCKER_USERNAME/$MODULE:$VERSION
 
-      - name: Run Image In Test Server
-        if: ${{ env.ENV == 'test' }}
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.TEST_ADDRESS }}
-          port: 22
-          username: root
-          password: ${{ secrets.SSH_TEST_KEY }}
-        script: |
-          docker pull $DOCKER_USERNAME/$MODULE:$VERSION
 
 
