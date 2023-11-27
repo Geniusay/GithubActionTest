@@ -10,6 +10,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get Commit Info
+        id: commit_info
+        run: |
+          # Extract commit message
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{  github.event.head_commit.message }})
+  
+          # 获取环境,模块,版本
+          ENV=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\[)[^\]]*(?=:)')
+          MODULE=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=:)[^\]]*(?=\])')
+          VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\s)[^\s]*$')
+  
+          echo "::set-output name=env::$ENV"
+          echo "::set-output name=module::$MODULE"
+          echo "::set-output name=version::$VERSION"
+
+      - name: Check if Info is Complete
+        run: |
+          # Check if env, module, and version are set
+          if [ -z "${{ steps.extract_info.outputs.env }}" ] || [ -z "${{ steps.extract_info.outputs.module }}" ] || [ -z "${{ steps.extract_info.outputs.version }}" ]; then
+            echo "Error: Commit information is incomplete. Aborting further actions."
+            exit 1
+          fi
+
+          echo "Commit information is complete. Proceeding with further actions."
+
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
