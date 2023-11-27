@@ -87,6 +87,11 @@ jobs:
       - name: Build with Maven
         if: ${{ env.SKIP != 'image'}}
         run: |
+          cd $MODULE
+          echo 'encryptor:' > src/main/resources/you-cant-see-that.yml
+          echo '  algorithm: ${{ secrets.JASYPT_ALGO }}' >> src/main/resources/you-cant-see-that.yml
+          echo '  password:  ${{ secrets.JASYPT_PWD }}' >> src/main/resources/you-cant-see-that.yml
+          cd ..
           mvn package -Dmaven.test.skip=true
 
       - name: Build and Push Docker Images
@@ -97,10 +102,6 @@ jobs:
         run: |
           echo "Module Name: $MODULE"
           cd $MODULE
-          
-          echo 'encryptor:' > /src/main/resources/you-cant-see-that.yml
-          echo '  algorithm: ${{ secrets.JASYPT_ALGO }}' >> /src/main/resources/you-cant-see-that.yml
-          echo '  password:  ${{ secrets.JASYPT_PWD }}' >> /src/main/resources/you-cant-see-that.yml
           
           mkdir docker
           cp ./Dockerfile ./docker
