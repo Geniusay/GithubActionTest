@@ -13,10 +13,8 @@ jobs:
       - name: Get Commit Info
         id: commit_info
         run: |
-          # Extract commit message
           COMMIT_MESSAGE=${{  github.event.head_commit.message }}
           echo $COMMIT_MESSAGE
-          # 获取环境,模块,版本
           ENV=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\[)[^\]]*(?=:)')
           MODULE=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=:)[^\]]*(?=\])')
           VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\s)[^\s]*$')
@@ -27,7 +25,6 @@ jobs:
 
       - name: Check if Info is Complete
         run: |
-          # Check if env, module, and version are set
           if [ -z "${{ steps.extract_info.outputs.env }}" ] || [ -z "${{ steps.extract_info.outputs.module }}" ] || [ -z "${{ steps.extract_info.outputs.version }}" ]; then
             echo "Error: Commit information is incomplete. Aborting further actions."
             exit 1
