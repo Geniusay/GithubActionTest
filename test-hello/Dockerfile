@@ -7,4 +7,5 @@ ENV Active=${Active}
 
 EXPOSE 8081
 
+
 ENTRYPOINT ["java","-jar","/test-hello.jar"]
