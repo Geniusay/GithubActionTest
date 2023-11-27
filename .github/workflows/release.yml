@@ -31,6 +31,7 @@ jobs:
           echo "::set-output name=env::$ENV"
           echo "::set-output name=module::$MODULE"
           echo "::set-output name=version::$VERSION"
+          
 
       - name: Check if Info is Complete
         run: |
