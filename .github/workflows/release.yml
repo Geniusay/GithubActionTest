@@ -137,8 +137,9 @@ jobs:
             if [ "${{ env.RUN_PORT }}" != "" ]; then
               stop_docker_name = "docker ps --filter "expose=${{env.RUN_PORT}}" --format "{{.Names}}""
               echo "$stop_docker_name"
-              if [ "$stop_docker_name" != "" ]; then
-                 docker stop ${{stop_docker_name}}
+              echo "STOP_DOCKER=stop_docker_name" >> $GITHUB_ENV
+              if [ "${{env.STOP_DOCKER}}" != "" ]; then
+                 docker stop ${{env.STOP_DOCKER}}
               fi
               docker rm ${{ env.MODULE }}-${{ env.VERSION }}
               
