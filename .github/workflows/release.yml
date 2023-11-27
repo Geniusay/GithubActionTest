@@ -69,13 +69,13 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
         run: |
-          echo "Module Name: $module"
-          cd $module
+          echo "Module Name: $MODULE"
+          cd $MODULE
           mkdir docker
           cp ./Dockerfile ./docker
           cp ./target/*.jar ./docker
           cd docker
-          docker build -t $DOCKER_USERNAME/$module:$version .
+          docker build -t $DOCKER_USERNAME/$MODULE:$VERSION .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $DOCKER_USERNAME/$module
+          docker push $DOCKER_USERNAME/$MODULE
           
