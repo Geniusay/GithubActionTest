@@ -24,9 +24,6 @@ jobs:
         run: |
           COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
           echo "$COMMIT_MESSAGE"
-          ENV=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\[)[^\]]*(?=:)')
-          MODULE=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=:)[^\]]*(?=\])')
-          VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\s)[^\s]*$')
           
           if [[ $commit_message =~ <Auto> \[([^[:space:]]+) ([^[:space:]]+) ([^[:space:]]+)\] ]]; then
             env="${BASH_REMATCH[1]}"
