@@ -113,5 +113,6 @@ jobs:
           echo "PORT=$port" >> $GITHUB_ENV
 
       - name: Pull the Image
-        if: ${{ env.PWD != '' && env.PORT != '' & env.HOST != ''}}
-        run: sshpass -p ${{env.PWD}} ssh -p ${{env.PORT}} -o StrictHostKeyChecking=no root@${{env.HOST}} "docker pull $DOCKER_USERNAME/$MODULE:$VERSION"
+        if: ${{ env.PWD != '' && env.PORT != '' && env.HOST != ''}}
+        run: |
+          sshpass -p ${{env.PWD}} ssh -p ${{env.PORT}} -o StrictHostKeyChecking=no root@${{env.HOST}} "docker pull $DOCKER_USERNAME/$MODULE:$VERSION"
