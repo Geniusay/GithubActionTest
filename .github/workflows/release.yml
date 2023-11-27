@@ -134,7 +134,7 @@ jobs:
           # ssh进入系统后执行什么样的操作。一般是关闭原有的服务在重启
           script: |
             docker pull ${{ secrets.DOCKER_REPO }}/${{ env.MODULE }}:${{ env.VERSION }}
-            if [ "${{ env.PORT }}" != "" ]; then
+            if [ "${{ env.RUN_PORT }}" != "" ]; then
              stop_docker_name = "docker ps --filter "expose=${{env.PORT}}" --format "{{.Names}}""
              if [ "$stop_docker_name" != "" ]; then
                docker stop $stop_docker_name
