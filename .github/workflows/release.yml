@@ -112,7 +112,15 @@ jobs:
           echo "HOST=$host" >> $GITHUB_ENV
           echo "PORT=$port" >> $GITHUB_ENV
 
-      - name: Pull the Image
-        if: ${{ env.PWD != '' && env.PORT != '' && env.HOST != ''}}
-        run: |
-          sshpass -p ${{env.PWD}} ssh -p ${{env.PORT}} -o StrictHostKeyChecking=no root@${{env.HOST}} "docker pull $DOCKER_USERNAME/$MODULE:$VERSION"
+      - name: Connect Server
+        uses: appleboy/ssh-action@master
+        with:
+          # 同上述
+          host: ${{ env.HOST }}
+          username: root
+          password: ${{ env.PWD }}
+          port: ${{ env.PORT }}
+          # ssh进入系统后执行什么样的操作。一般是关闭原有的服务在重启
+          script: |
+            docker pull $DOCKER_USERNAME/$MODULE:$VERSION
+      
