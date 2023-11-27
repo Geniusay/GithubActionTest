@@ -22,7 +22,7 @@ jobs:
       - name: Get Commit Info
         id: commit_info
         run: |
-          commit_message=$(git log -1 --pretty=%B)
+          commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
           if echo "$commit_message" | grep -Eq '<Auto> \[([^[:space:]]+) ([^[:space:]]+) ([^[:space:]]+)\]'; then
