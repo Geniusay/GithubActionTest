@@ -77,5 +77,5 @@ jobs:
           cd docker
           docker build -t $DOCKER_USERNAME/$MODULE:$VERSION .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $DOCKER_USERNAME/$MODULE
+          docker push $DOCKER_USERNAME/$MODULE:$VERSION
           
