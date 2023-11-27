@@ -54,15 +54,13 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
         run: |
-          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
-          MODULE_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP '\[([^]]+)\]' | sed 's/\[\(.*\)\]/\1/')
-          echo "Module Name: $MODULE_NAME"
+          echo "Module Name: $module"
           cd $MODULE_NAME
           mkdir docker
           cp ./Dockerfile ./docker
           cp ./target/*.jar ./docker
           cd docker
-          docker build -t $DOCKER_USERNAME/$MODULE_NAME .
+          docker build -t $DOCKER_USERNAME/$module:$version .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $DOCKER_USERNAME/$MODULE_NAME
+          docker push $DOCKER_USERNAME/$module
           
