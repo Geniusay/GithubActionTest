@@ -31,15 +31,12 @@ jobs:
           commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
-          if [[ "$commit_message" =~ -e:([^\ ]*)\ -m:([^\ ]*)\ -v:([^\ ]*) ]]; then
+          if [[ "$commit_message" =~ -e:([^\ ]*)\ -m:([^\ ]*)\ -v:([^\ ]*)\ -skip:([^\ ]*))? ]]; then
             env="${BASH_REMATCH[1]}"
             module="${BASH_REMATCH[2]}"
             version="${BASH_REMATCH[3]}"
-            skip="${BASH_REMATCH[4]}"
+            skip="${BASH_REMATCH[4]:-''}"
           
-            skip="${commit_message##*-skip:}"
-            skip="${skip:-''}"
-    
             echo "Environment: $env"
             echo "Module: $module"
             echo "Version: $version"
