@@ -10,11 +10,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Check Commit Message
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"[Auto]"* ]]; then
+            echo "Commit message contains [Auto]. Proceeding with the workflow."
+          else
+            echo "Commit message does not contain [Auto]. Skipping the workflow."
+            exit 78 
+          fi
+
       - name: Get Commit Info
         id: commit_info
         run: |
-          COMMIT_MESSAGE=${{  github.event.head_commit.message }}
-          echo $COMMIT_MESSAGE
+          COMMIT_MESSAGE="${{  github.event.head_commit.message }}"
+          echo "$COMMIT_MESSAGE"
           ENV=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\[)[^\]]*(?=:)')
           MODULE=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=:)[^\]]*(?=\])')
           VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\s)[^\s]*$')
