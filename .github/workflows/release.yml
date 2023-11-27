@@ -90,7 +90,7 @@ jobs:
           cp ./Dockerfile ./docker
           cp ./target/*.jar ./docker
           cd docker
-          docker build -t $DOCKER_USERNAME/$MODULE:$VERSION .
+          docker build -t $DOCKER_REPO/$MODULE:$VERSION .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push $DOCKER_REPO/$MODULE:$VERSION
 
