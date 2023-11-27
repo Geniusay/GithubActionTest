@@ -31,25 +31,36 @@ jobs:
           commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
-          if [[ "$commit_message" =~ (\ -e:([^\ ]*))? -m:([^\ ]*)\ -v:([^\ ]*)(\ -skip:([^\ ]*))? ]]; then
-            env="${BASH_REMATCH[1]:-''}"
-            module="${BASH_REMATCH[2]}"
-            version="${BASH_REMATCH[3]}"
-            skip="${BASH_REMATCH[4]:-''}"
+          env=""
+          module=""
+          version=""
+          skip=""
           
-            echo "Environment: $env"
-            echo "Module: $module"
-            echo "Version: $version"
-            echo "Skip: $skip"
-          
-            echo "ENV=$env" >> $GITHUB_ENV
-            echo "MODULE=$module" >> $GITHUB_ENV
-            echo "VERSION=$version" >> $GITHUB_ENV
-            echo "SKIP=$version" >> $GITHUB_ENV
-          else
-            echo "No match found."
-            exit 1
+          if [[ "$commit_message" =~ -e:([^\ ]*) ]]; then
+          env="${BASH_REMATCH[1]}"
           fi
+          
+          if [[ "$commit_message" =~ -m:([^\ ]*) ]]; then
+          module="${BASH_REMATCH[1]}"
+          fi
+          
+          if [[ "$commit_message" =~ -v:([^\ ]*) ]]; then
+          version="${BASH_REMATCH[1]}"
+          fi
+          
+          if [[ "$commit_message" =~ -skip:([^\ ]*) ]]; then
+          skip="${BASH_REMATCH[1]}"
+          fi
+          
+         echo "Environment: $env"
+         echo "Module: $module"
+         echo "Version: $version"
+         echo "Skip: $skip"
+          
+         echo "ENV=$env" >> $GITHUB_ENV
+         echo "MODULE=$module" >> $GITHUB_ENV
+         echo "VERSION=$version" >> $GITHUB_ENV
+         echo "SKIP=$version" >> $GITHUB_ENV
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
