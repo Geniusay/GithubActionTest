@@ -115,7 +115,7 @@ jobs:
       - name: 登录服务器, 执行脚本
         uses: appleboy/ssh-action@master
         with:
-          host: {{env.HOST}}
+          host: ${{env.HOST}}
           port: ${{env.PORT}}
           username: root
           password: ${{env.PWD}}
