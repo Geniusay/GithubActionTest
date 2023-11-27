@@ -63,7 +63,7 @@ jobs:
           mvn package -Dmaven.test.skip=true
 
       - name: Build and Push Docker Images
-        if: ${{$SKIP != 'image'}}
+        if: ${{ env.SKIP != 'image'}}
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
@@ -79,7 +79,7 @@ jobs:
           docker push $DOCKER_USERNAME/$MODULE:$VERSION
 
       - name: Run Image In Test Server
-        if: ${{ $ENV == 'test' }}
+        if: ${{ env.ENV == 'test' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.TEST_ADDRESS }}
