@@ -92,7 +92,7 @@ jobs:
         run: |
           cd $MODULE
           echo "jasypt:" > src/main/resources/you-cant-see-that.yml
-          echo "  encryptor:" > src/main/resources/you-cant-see-that.yml
+          echo "  encryptor:" >> src/main/resources/you-cant-see-that.yml
           echo "    algorithm: $JASYPT_ALGO" >> src/main/resources/you-cant-see-that.yml
           echo "    password:  $JASYPT_PWD" >> src/main/resources/you-cant-see-that.yml
           cat src/main/resources/you-cant-see-that.yml
