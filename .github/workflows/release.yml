@@ -1,6 +1,9 @@
-name: 根据模块名推送不同模块的镜像
+name: Genius 多模块项目部署 [CI|CD]
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -97,13 +100,13 @@ jobs:
           host=""
           port=""
           if [ "${{ env.ENV }}" == "prod" ]; then
-           pwd="${{ secrets.SSH_PROD_KEY }}"
+           pwd="${{ secrets.PROD_PWD }}"
            host="${{ secrets.PROD_ADDRESS }}"
-           port="10022"
+           port="${{ secrets.PROD_PORT }}"
           elif [ "${{ env.ENV }}" == "test" ]; then
-           pwd="${{ secrets.SSH_TEST_KEY }}"
+           pwd="${{ secrets.TEST_PWD }}"
            host="${{ secrets.TEST_ADDRESS }}"
-           port="22"
+           port="${{ secrets.TEST_PORT }}"
           else
            echo "Invalid environment"
            exit 1
