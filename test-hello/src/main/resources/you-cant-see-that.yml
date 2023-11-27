@@ -1,0 +1,4 @@
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    password: genius_serve_0704
