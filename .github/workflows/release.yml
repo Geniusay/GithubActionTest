@@ -25,14 +25,24 @@ jobs:
           commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
-          if [[ "$commit_message" =~ <Auto> \[([^[:space:]]+) ([^[:space:]]+) ([^[:space:]]+)\] ]]; then
-            env="${BASH_REMATCH[1]}"
-            module="${BASH_REMATCH[2]}"
-            version="${BASH_REMATCH[3]}"
+          if [[ "$commit_message" == *"<Auto> ["* ]]; then
+            commit_message="${commit_message#<Auto> [}"  # Remove leading "<Auto> ["
+            commit_message="${commit_message%]}"  # Remove trailing "]"
           
-            echo "Environment: $env"
-            echo "Module: $module"
-            echo "Version: $version"
+            IFS=' ' read -ra parts <<< "$commit_message"
+          
+            if [ "${#parts[@]}" -eq 3 ]; then
+              env="${parts[0]}"
+              module="${parts[1]}"
+              version="${parts[2]}"
+          
+              echo "Environment: $env"
+              echo "Module: $module"
+              echo "Version: $version"
+            else
+              echo "Invalid format."
+              exit 1
+            fi
           else
             echo "No match found."
             exit 1
