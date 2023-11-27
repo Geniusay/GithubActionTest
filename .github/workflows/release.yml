@@ -7,15 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Auto Label
         uses: actions/checkout@v2
 
       - name: Check Commit Message
         run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"[Auto]"* ]]; then
-            echo "Commit message contains [Auto]. Proceeding with the workflow."
+          if [[ "${{ github.event.head_commit.message }}" == *"<Auto>"* ]]; then
+            echo "Commit message contains <Auto>. Proceeding with the workflow."
           else
-            echo "Commit message does not contain [Auto]. Skipping the workflow."
+            echo "Commit message does not contain <Auto>. Skipping the workflow."
             exit 78 
           fi
 
