@@ -25,24 +25,20 @@ jobs:
           commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
-          if [[ "$commit_message" == *"<Auto> ["* ]]; then
-            commit_message="${commit_message#<Auto> [}"  # Remove leading "<Auto> ["
-            commit_message="${commit_message%]}"  # Remove trailing "]"
+          if [[ "$commit_message" == *"-e:"* && "$commit_message" == *"-m:"* && "$commit_message" == *"-v:"* ]]; then
+            # Extract env, module, and version
+            env="${commit_message#*-e:}"
+            env="${env%% -*}"
           
-            IFS=' ' read -ra parts <<< "$commit_message"
+            module="${commit_message#*-m:}"
+            module="${module%% -*}"
           
-            if [ "${#parts[@]}" -eq 3 ]; then
-              env="${parts[0]}"
-              module="${parts[1]}"
-              version="${parts[2]}"
+            version="${commit_message#*-v:}"
+            version="${version%% -*}"
           
-              echo "Environment: $env"
-              echo "Module: $module"
-              echo "Version: $version"
-            else
-              echo "Invalid format."
-              exit 1
-            fi
+            echo "Environment: $env"
+            echo "Module: $module"
+            echo "Version: $version"
           else
             echo "No match found."
             exit 1
