@@ -70,6 +70,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
+        if: ${{ env.SKIP != 'image'}}
         run: |
           mvn package -Dmaven.test.skip=true
 
@@ -89,30 +90,39 @@ jobs:
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push $DOCKER_USERNAME/$MODULE:$VERSION
 
-      - name: Set up SSH for prod
-        if: ${{ env.ENV == 'prod'}}
-        uses: webfactory/ssh-agent@v0.6.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PROD_KEY }}
-          known_hosts: ${{secrets.PROD_ADDRESS}}
-          ssh-strict: true
-
-      - name: Set up SSH for test
-        if: ${{ env.ENV == 'test'}}
-        uses: webfactory/ssh-agent@v0.6.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
-          known_hosts: ${{secrets.TEST_ADDRESS}}
-          ssh-strict: true
-
-      - name: Pull Docker image
+      - name: Choose the Server Host
         if: ${{ env.ENV != ''}}
         run: |
+          ssh_key=""
+          host=""
+          port=""
           if [ "${{ env.ENV }}" == "prod" ]; then
-            ssh -p 10022 root@${{secrets.PROD_ADDRESS}} "$DOCKER_USERNAME/$MODULE:$VERSION"
+           ssh_key="${{ secrets.SSH_PROD_KEY }}"
+           host="${{ secrets.PROD_ADDRESS }}"
+           port="10022"
           elif [ "${{ env.ENV }}" == "test" ]; then
-            ssh -p 22 root@${{secrets.TEST_ADDRESS}} "$DOCKER_USERNAME/$MODULE:$VERSION"
+           ssh_key="${{ secrets.SSH_TEST_KEY }}"
+           host="${{ secrets.TEST_ADDRESS }}"
+           port="22"
           else
-            echo "Invalid environment"
-            exit 1
-          fi
+           echo "Invalid environment"
+           exit 1
+          fi 
+          echo "SSH_KEY=$ssh_key" >> $GITHUB_ENV
+          echo "HOST=$host" >> $GITHUB_ENV
+          echo "PORT=$port" >> $GITHUB_ENV
+
+      - name: Setup SSH
+        if: ${{ env.SSH_KEY != ''}}
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ env.SSH_KEY }}
+
+      - name: Setup Host
+        if: ${{ env.HOST != ''}}
+        run: ssh-keyscan ${{ env.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Pull Docker image
+        if: ${{ env.HOST != '' && env.PORT != ''}}
+        run: |
+          ssh -p ${{env.PORT}} root@${{env.HOST}} "$DOCKER_USERNAME/$MODULE:$VERSION"
