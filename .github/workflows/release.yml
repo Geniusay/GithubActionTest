@@ -25,16 +25,10 @@ jobs:
           commit_message="${{ github.event.head_commit.message }}"
           echo "Commit Message: $commit_message"
           
-          if [[ "$commit_message" == *"-e:"* && "$commit_message" == *"-m:"* && "$commit_message" == *"-v:"* ]]; then
-            # Extract env, module, and version
-            env="${commit_message#*-e:}"
-            env="${env%% -*}"
-          
-            module="${commit_message#*-m:}"
-            module="${module%% -*}"
-          
-            version="${commit_message#*-v:}"
-            version="${version%% -*}"
+          if [[ "$commit_message" =~ -e:([^\ ]*)\ -m:([^\ ]*)\ -v:([^\ ]*) ]]; then
+            env="${BASH_REMATCH[1]}"
+            module="${BASH_REMATCH[2]}"
+            version="${BASH_REMATCH[3]}"
           
             echo "Environment: $env"
             echo "Module: $module"
