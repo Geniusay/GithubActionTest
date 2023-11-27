@@ -15,7 +15,7 @@ jobs:
         run: |
           # Extract commit message
           COMMIT_MESSAGE=${{  github.event.head_commit.message }}
-  
+          echo $COMMIT_MESSAGE
           # 获取环境,模块,版本
           ENV=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=\[)[^\]]*(?=:)')
           MODULE=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=:)[^\]]*(?=\])')
