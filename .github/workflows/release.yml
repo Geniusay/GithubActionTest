@@ -89,5 +89,28 @@ jobs:
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push $DOCKER_USERNAME/$MODULE:$VERSION
 
+      - name: Set up SSH for prod
+        if: ${{ env.ENV == 'prod'}}
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSH_PROD_KEY }}
+          known_hosts: ${{secrets.PROD_ADDRESS}}
 
+      - name: Set up SSH for test
+        if: ${{ env.ENV == 'test'}}
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
+          known_hosts: ${{secrets.TEST_ADDRESS}}
 
+      - name: Pull Docker image
+        if: ${{ env.ENV != ''}}
+        run: |
+          if [ "${{ env.ENV }}" == "prod" ]; then
+            ssh -p 10022 root@${{secrets.PROD_ADDRESS}} "$DOCKER_USERNAME/$MODULE:$VERSION"
+          elif [ "${{ env.ENV }}" == "test" ]; then
+            ssh -p 22 user@${{secrets.TEST_ADDRESS}} "$DOCKER_USERNAME/$MODULE:$VERSION"
+          else
+            echo "Invalid environment"
+            exit 1
+          fi
