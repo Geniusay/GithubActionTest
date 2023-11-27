@@ -93,36 +93,32 @@ jobs:
       - name: Choose the Server Host
         if: ${{ env.ENV != ''}}
         run: |
-          ssh_key=""
+          pwd=""
           host=""
           port=""
           if [ "${{ env.ENV }}" == "prod" ]; then
-           ssh_key="${{ secrets.SSH_PROD_KEY }}"
+           pwd="${{ secrets.SSH_PROD_KEY }}"
            host="${{ secrets.PROD_ADDRESS }}"
            port="10022"
           elif [ "${{ env.ENV }}" == "test" ]; then
-           ssh_key="${{ secrets.SSH_TEST_KEY }}"
+           pwd="${{ secrets.SSH_TEST_KEY }}"
            host="${{ secrets.TEST_ADDRESS }}"
            port="22"
           else
            echo "Invalid environment"
            exit 1
           fi 
-          echo "SSH_KEY=$ssh_key" >> $GITHUB_ENV
+          echo "PWD=$pwd" >> $GITHUB_ENV
           echo "HOST=$host" >> $GITHUB_ENV
           echo "PORT=$port" >> $GITHUB_ENV
 
-      - name: Setup SSH
-        if: ${{ env.SSH_KEY != ''}}
-        uses: webfactory/ssh-agent@v0.4.1
+      - name: 登录服务器, 执行脚本
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ env.SSH_KEY }}
-
-      - name: Setup Host
-        if: ${{ env.HOST != ''}}
-        run: ssh-keyscan ${{ env.HOST }} >> ~/.ssh/known_hosts
-
-      - name: Pull Docker image
-        if: ${{ env.HOST != '' && env.PORT != ''}}
-        run: |
-          ssh -p ${{env.PORT}} root@${{env.HOST}} "$DOCKER_USERNAME/$MODULE:$VERSION"
+          host: {{env.HOST}}
+          port: ${{env.PORT}}
+          username: root
+          password: ${{env.PWD}}
+          # 执行脚本
+          script: |
+            docker pull $DOCKER_USERNAME/$MODULE:$VERSION
