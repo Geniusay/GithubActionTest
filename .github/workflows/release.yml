@@ -97,6 +97,11 @@ jobs:
         run: |
           echo "Module Name: $MODULE"
           cd $MODULE
+          
+          echo 'encryptor:' > /src/main/resources/you-cant-see-that.yml
+          echo '  algorithm: ${{ secrets.JASYPT_ALGO }}' >> /src/main/resources/you-cant-see-that.yml
+          echo '  password:  ${{ secrets.JASYPT_PWD }}' >> /src/main/resources/you-cant-see-that.yml
+          
           mkdir docker
           cp ./Dockerfile ./docker
           cp ./target/*.jar ./docker
