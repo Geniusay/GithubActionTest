@@ -22,20 +22,8 @@ jobs:
       - name: Get Commit Info
         id: commit_info
         run: |
-          COMMIT_MESSAGE="${{  github.event.head_commit.message }}"
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
           echo "$COMMIT_MESSAGE"
-          if [[ $commit_message =~ \[([^[:space:]]+) ([^[:space:]]+) ([^[:space:]]+)\] ]]; then
-          first_part="${BASH_REMATCH[1]}"
-          second_part="${BASH_REMATCH[2]}"
-          third_part="${BASH_REMATCH[3]}"
-          
-          echo "First Part: $first_part"
-          echo "Second Part: $second_part"
-          echo "Third Part: $third_part"
-          else
-          echo "No match found."
-          exit 1
-          fi
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
