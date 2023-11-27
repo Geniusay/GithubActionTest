@@ -9,12 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    outputs:
-      env: ${{ steps.extract.outputs.env }}
-      module: ${{ steps.extract.outputs.module }}
-      version: ${{ steps.extract.outputs.version }}
-      skip: ${{steps.extract.outputs.skip}}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,6 +32,8 @@ jobs:
           module=""
           version=""
           skip=""
+          docker_env=""
+          run_port=""
           
           if [[ "$commit_message" =~ -e:([^\ ]*) ]]; then
           env="${BASH_REMATCH[1]}"
@@ -55,15 +51,27 @@ jobs:
           skip="${BASH_REMATCH[1]}"
           fi
           
+          if [[ "$commit_message" =~ -rp:([^\ ]*) ]]; then
+          run_port="${BASH_REMATCH[1]}"
+          fi
+          
+          if [[ "$commit_message" =~ -de:([^\ ]*) ]]; then
+          docker_env="${BASH_REMATCH[1]}"
+          fi
+          
           echo "Environment: $env"
           echo "Module: $module"
           echo "Version: $version"
           echo "Skip: $skip"
+          echo "Run_Port: $run_port"
+          echo "Docker_Env: $docker_env"
           
           echo "ENV=$env" >> $GITHUB_ENV
           echo "MODULE=$module" >> $GITHUB_ENV
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "SKIP=$skip" >> $GITHUB_ENV
+          echo "RUN_PORT=$run_port" >> $GITHUB_ENV
+          echo "DOCKER_ENV=$docker_env" >> $GITHUB_ENV
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -126,4 +134,11 @@ jobs:
           # ssh进入系统后执行什么样的操作。一般是关闭原有的服务在重启
           script: |
             docker pull ${{ secrets.DOCKER_REPO }}/${{ env.MODULE }}:${{ env.VERSION }}
+            if [ "${{ env.PORT }}" != "" ]; then
+             stop_docker_name = "docker ps --filter "expose=${{env.PORT}}" --format "{{.Names}}""
+             if [ "$stop_docker_name" != "" ]; then
+               docker stop $stop_docker_name
+             fi
+             docker run -p ${{env.PORT}}:${{env.PORT}} --name ${{ env.MODULE }}-${{ env.VERSION }} ${{env.DOCKER_ENV}} -d ${{ secrets.DOCKER_REPO }}/${{ env.MODULE }}:${{ env.VERSION }}
+            fi
       
