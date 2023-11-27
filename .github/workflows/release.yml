@@ -91,17 +91,19 @@ jobs:
 
       - name: Set up SSH for prod
         if: ${{ env.ENV == 'prod'}}
-        uses: webfactory/ssh-agent@v0.5.2
+        uses: webfactory/ssh-agent@v0.6.0
         with:
           ssh-private-key: ${{ secrets.SSH_PROD_KEY }}
           known_hosts: ${{secrets.PROD_ADDRESS}}
+          ssh-strict: true
 
       - name: Set up SSH for test
         if: ${{ env.ENV == 'test'}}
-        uses: webfactory/ssh-agent@v0.5.2
+        uses: webfactory/ssh-agent@v0.6.0
         with:
           ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
           known_hosts: ${{secrets.TEST_ADDRESS}}
+          ssh-strict: true
 
       - name: Pull Docker image
         if: ${{ env.ENV != ''}}
